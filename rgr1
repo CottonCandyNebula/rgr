@@ -1,0 +1,348 @@
+#include <iostream>
+using namespace std;
+#include <sstream>
+#include <cstdlib>
+#include<fstream>
+#include <cstdio>
+#include <string.h>
+#include <stdio.h>
+
+/* 3.	Заказы типография 
+    C чтением файла проблемы :( */
+
+
+
+
+//Клиент
+class Client {
+
+public:
+    string name, phone_number, date;
+    string na, numb, da;
+    Client() { 
+        name = "\t"; phone_number = "\t"; date = "\t";
+    }
+	
+	 Client(const string na, const string numb, const string da){
+	    this->name = na;
+	    this->phone_number = numb;
+	    this->date = da;
+	} 
+	
+	
+	void addClient(){
+	    fcloseall(); 
+	    cout << "Введите данные о клиенте:" << endl;
+	    cout << "Имя: "; getline(cin, na);  /*cin >> na; */
+	    cout << "Телефон: "; cin >> numb; 
+	    cout << "Дата: "; (cin >> da).get(); //cin >> da; 
+	    create(na,numb,da);
+	}  
+	
+	void addClient2(const string na,const string numb,const string da){
+	    create(na,numb,da);
+	}
+	
+	void create(const string na, const string numb, const string da) {
+	    name = na; phone_number = numb; date = da; 
+	    Client(na,numb,da);
+	}
+	
+	
+	string GetInfo(){
+	    return "Клиент: " + name + "\n" + "Телефон: " + phone_number + "\n" + "Дата обращения: " + date + "\n";
+	}
+	
+	
+};
+
+
+//Заказ
+class Order {
+
+public:
+    string content, cont, cost, co;
+    
+    Order() { 
+        content = "\t"; cost = "\t";
+    }
+	
+	 Order(const string cont, const string co){
+	    this->content = cont;
+	    this->cost = co;
+	} 
+	
+	
+	void addOrder(){
+	    fcloseall();
+	    cout << "Введите данные о заказе:" << endl;
+	    cout << "Содержание заказа: "; getline(cin, cont); 
+	    cout << "Цена (в рублях): "; (cin >> co).get(); 
+	    createOrder(cont, co);
+	    cout << endl;
+	}  
+	
+	void addOrder2(const string cont, const string co){
+	    createOrder(cont, co);
+	    cout << endl;
+	}
+	
+	void createOrder(const string cont, const string co) {
+	    content = cont; cost = co; 
+	    Order(cont, co);
+	}
+	
+	
+	string GetInfoOrder(){
+	    ostringstream os;
+	    os << "Заказ: " << content << "\n" << "Стоимость заказа: " << cost  << endl;
+	    return os.str();
+	}
+	
+	
+};
+
+class Department {
+    public:
+    string office, deadline;
+    string type;
+	
+	virtual string GetInfoDepartment()=0;
+	
+	
+	virtual void addDepartment(const string off, const string dline, const string ty){
+	    office=off; deadline=dline;
+	    type=ty;
+	}
+	
+	
+	
+};
+
+class Urgent : public Department {
+    public:
+    Urgent(){
+        type = '1'; office = "\t"; deadline = "\t";
+    }
+    
+    string GetInfoDepartment(){
+	    ostringstream od;
+	    od << type << "\n" << "Отдел: " << office << "\n" <<"Срочный заказ, крайний срок: " << deadline << endl;
+	    return od.str();
+	}
+};
+
+class NonUrgent : public Department {
+    public:
+    NonUrgent(){
+        type = '0'; office = "\t"; deadline = "Заказ несрочный";
+    }
+    
+    NonUrgent(const string off, const string dline ){
+        this->type = '0'; this->office = off; this->deadline = dline;
+    }
+    
+    string GetInfoDepartment(){
+	    ostringstream ov;
+	    ov << type << "\n" << "Отдел: " << office << "\n" <<"Несрочный заказ, примерное время работы: " << deadline << endl;
+	    return ov.str();
+	}
+};
+
+class fabrika{
+    public:
+  
+    Department* addDepartment(const string type){
+      Department *res = NULL;
+      string off, dline, tmw, tmp, ty;
+      ty = type;
+      tmw = '1';
+      tmp = '0';
+      if (ty==tmw){
+          res = new Urgent;
+          fcloseall();
+	      cout << "Данные для исполнителя:" << endl;
+	      cout << "Отдел: "; getline(cin, off);
+	      cout << "Крайний срок (дата): "; getline(cin, dline);  
+	      cout << endl;
+          res->addDepartment(off, dline, ty);
+      }
+      else if (ty==tmp){
+          res = new NonUrgent;
+          fcloseall();
+          cout << "Данные для исполнителя:" << endl;
+	      cout << "Отдел: "; getline(cin, off);
+	      cout << "Примерное время работы: "; getline(cin, dline);  
+	      cout << endl;
+          res->addDepartment(off, dline, ty);
+      }
+      return res;
+  }
+  
+    Department* addDepartment(const string t, const string otd,const string dli){ 
+      Department *res = NULL;
+      string off, dline, tmw, tmp, ty;
+      ty=t;
+      tmw = '1';
+      tmp = '0';
+      if (ty==tmw){
+          res = new Urgent;
+	      off=otd;
+	      dline=dli;  
+	      cout << endl;
+          res->addDepartment(off, dline,ty);
+      }
+      else if (ty==tmp){
+          res = new NonUrgent;
+	      off=otd;
+	      dline=dli;  
+	      cout << endl;
+          res->addDepartment(off, dline,ty);
+      }
+      return res;
+  }
+  
+};
+
+
+
+int main()
+{
+    setlocale(LC_ALL, "ru");
+    
+    fabrika division;
+    string na, numb, da, cont, co, off, dline,a;
+    string type;
+    
+    int lenght = 100;
+    Client *arr = new Client[lenght];
+    Order *arrOr = new Order[lenght]; 
+    Department **arrDe = new Department*[lenght]; 
+    int j=0;
+    int q=-1;
+    
+    /*std::ifstream file;
+    file.open("file");
+    if (!file.is_open()) {cout << "Файл не найден" << endl; j==0;}
+    else {
+        j=-1;
+        cout << "Файл открыт" << endl;
+        /*string na,numb,da,cont,co,t,otd,dli;
+        while (!file.eof()){
+            //j++;
+            for (int i=0;i<8;i++){
+                //cout << "1"<< endl;
+                string buf;
+                if(getline(file, buf, '\n')) {
+                    if (i==0) {na = buf; cout << na  << endl;}
+                    else if (i==1) {numb = buf;}
+                    else if (i==2) {da=buf;}
+                    else if (i==3) {cont=buf;}
+                    else if (i==4) {co=buf;}
+                    else if (i==5) {t = buf;} 
+                    else if (i==6) {otd = buf;}
+                    else if (i==7) {dli=buf;}
+                }
+            }
+            j++;
+            arr[j].addClient2(na,numb,da);
+            arrOr[j].addOrder2(cont, co);
+            arrDe[j] = division.addDepartment(t,otd,dli); //не читает
+        }
+        cout << "Файл записан" << endl;
+    }
+    file.close(); */
+    
+    
+    char choice = '0';
+    cout << "--------------------------" << endl;
+    while (choice != '4'){
+        system("cls");
+        cout << endl << "Выберите действие: " << endl;
+        cout << "1) Посмотреть список всех клиентов и заказов" <<endl;
+        cout << "2) Добавить нового клиента" <<endl;
+        cout << "3) Удалить клиента" <<endl;
+        cout << "4) Закрыть программу" <<endl;
+        cout <<  "Ваш выбор:";	(cin >> choice).get();
+		//getline(cin, a, '\n');
+    
+        if (choice =='1'){
+            cout << "Все клиенты и заказы:" << endl;
+            for (int i=0; i < lenght; i++){
+                if (arr[i].name == "\t") {
+                    break;
+                }
+                else {
+                    cout<< arr[i].GetInfo() << endl;
+                    cout<< arrOr[i].GetInfoOrder() << endl;
+                    cout<< arrDe[i]->GetInfoDepartment() << endl;
+                    cout << "- - - " << endl;
+                }
+            }
+        }
+        
+        if (choice =='2'){
+            arr[j].addClient();
+            arrOr[j].addOrder();
+            cout << "Введите статус заказа: 1 - срочный, 0 - несрочный:" << endl;
+            (cin >> type).get(); //getline(cin, type); 
+            arrDe[j] = division.addDepartment(type); //для исполнителя, ФАБРИКА 
+            j++;
+        }
+        
+		if (choice =='3'){
+		int r;
+		cout<<"Введите номер записи: ";
+		cin >> r;
+		Client *new_mscl;
+		Order *new_msord;
+		Department **new_msdep;
+		q=-1;
+		new_mscl = new Client[lenght];
+		new_msord = new Order[lenght];
+		new_msdep = new Department*[lenght];
+		for (int i=0;i<lenght;i++) {
+		    q+=1;
+		    if (i==r) {
+                i += 1;
+                new_mscl[q] = arr[i];
+                new_msord[q] = arrOr[i];
+                new_msdep[q] = arrDe[i];
+            }
+            else {
+                new_mscl[q] = arr[i];
+                new_msord[q] = arrOr[i];
+                new_msdep[q] = arrDe[i];
+            }
+		}
+		arr=new_mscl;
+		arrOr=new_msord;
+		arrDe=new_msdep;
+		j--;
+		}
+        }
+    if (choice == '4'){
+    ofstream file;
+		file.open("file.txt");
+        
+        int len = j;
+		
+		for (int i = 0; i < len; i++)
+		{
+			file << arr[i].name << '\n';				// имя клиента
+			file << arr[i].phone_number << '\n';		// номер
+			file << arr[i].date << '\n';				// дата
+			file << arrOr[i].content << '\n';          //содержание
+			file << arrOr[i].cost << '\n';			// стоимость
+			file << arrDe[i]->type << '\n';    //тип заказа
+			file << arrDe[i]->office << '\n';			// отдел
+			file << arrDe[i]->deadline << '\n';     //срок
+		}
+		cout << "Файл записан" << endl;
+		file.close();
+    }
+    delete[] arr;
+    delete[] arrOr;
+    delete[] arrDe;
+    return 0;
+    }
